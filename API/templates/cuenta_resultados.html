@@ -1,0 +1,110 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<style>
+    .custom-container {
+        width: 21cm;
+        height: 21 cm;
+        border: 1px solid #747474;
+        padding: 1cm;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    .result-item h5 {
+        margin-bottom: 0;
+    }
+
+    .result-item h5 strong {
+        display: inline-block;
+        margin-left: 1rem;
+    }
+
+    input,
+    button {
+        height: 1cm;
+    }
+
+    .resultado {
+        border-top: 1px solid black;
+        margin-top: 1rem;
+    }
+</style>
+
+
+<main role="main">
+    <div class="border-bottom pb-2 mb-3">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <h1 class="h2">Cuenta de Resultados - Diaria</h1>
+            <a href="/" class="btn btn-outline-secondary">Volver al Inicio</a>
+        </div>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="input-section">
+        <form method="POST" action="/cuenta_resultados">
+            {% csrf_token %}
+            <label for="fecha">Fecha:</label>
+            <div class="form-group">
+                <input type="date" id="fecha" name="fecha" value="{{ fecha }}" >
+                <button type="submit" class="btn btn-primary">Calcular</button>
+            </div>
+        </form>
+    </div>
+
+    {% if resultados %}
+    <div class="results-section mt-4 p-4 bg-light custom-container">
+        <h3 class="mb-3">Resultados para el día {{ fecha|date:"d/m/Y" }}</h3>
+        <div class="result-item">
+            <h5 class="font-weight-bold">(+) Ingresos (Ventas)
+                <strong class="{% if ventas < 0 %}text-danger{% endif %}">{{ ventas }}€</strong>
+            </h5>
+            <small class="text-muted">Cantidad total de ingresos generados por las ventas de lámparas.</small>
+        </div>
+        <div class="result-item">
+            <h5 class="font-weight-bold">(-) Devoluciones
+                <strong class="{% if devoluciones < 0 %}text-danger{% endif %}">{{ devoluciones }}€</strong>
+            </h5>
+            <small class="text-muted">Cantidad total de devoluciones realizadas por los clientes.</small>
+        </div>
+        <div class="result-item">
+            <h5 class="font-weight-bold">(-) Costo de las Compras
+                <strong class="{% if compras < 0 %}text-danger{% endif %}">{{ compras }}€</strong>
+            </h5>
+            <small class="text-muted">Costo total de las compras.</small>
+        </div>
+        <div class="result-item resultado">
+            <h5 class="font-weight-bold">(=) Resultado Neto
+                <strong class="{% if resultado < 0 %}text-danger{% endif %}">{{ resultado }}€</strong>
+            </h5>
+            <small class="text-muted">Diferencia entre los ingresos y los costos de ventas, que representa el resultado
+                financiero obtenido.</small>
+        </div>
+    </div>
+
+
+    <div class="d-flex justify-content-between mt-4">
+        <form method="POST" action="/cuenta_resultados">
+            {% csrf_token %}
+            <input type="hidden" name="fecha" value="{{ fecha|date:'Y-m-d' }}">
+            <input type="hidden" name="dia_anterior" value="1">
+            <button type="submit" class="btn btn-outline-primary">Día Anterior</button>
+        </form>
+        <form method="POST" action="/cuenta_resultados">
+            {% csrf_token %}
+            <input type="hidden" name="fecha" value="{{ fecha|date:'Y-m-d' }}">
+            <input type="hidden" name="dia_siguiente" value="1">
+            <button type="submit" class="btn btn-outline-primary">Día Siguiente</button>
+        </form>
+    </div>
+    
+    {% endif %}
+
+</main>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'index.html' %}
+
+{% block aside %}{% endblock %}
+
+{% block login %}
+
+    <p>Logged out!</p>
+    <a href="{% url 'login'%}">Click here to login again.</a>
+
+{% endblock %}

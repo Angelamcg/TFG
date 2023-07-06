@@ -1,0 +1,48 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block login %}
+
+<main class="d-flex justify-content-center align-items-center" style="width: 45cm;">
+  <div class="card p-5 rounded-5 shadow">
+    <img src="/static/images/circular.bmp" alt="logo" class="img-responsive"
+    style="height: 5cm; width: 5cm; margin-left: 1cm;">
+    <h3 class="text-center mb-4">Gestión de inventario</h3>
+
+    {% if form.errors %}
+    <p class="text-danger">Usuario o contraseña incorrecta. Inténtalo de nuevo.</p>
+    {% endif %}
+
+    {% if next %}
+    {% if not user.is_authenticated %}
+    <p class="text-danger">Inicie sesión para ver esta página.</p>
+    {% else %}
+    <p class="text-danger">Tu cuenta no tiene acceso a esta página.</p>
+    {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <div class="mb-3 mt-4">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+      </div>
+      <div class="mb-3">
+        {{ form.password.label_tag }}
+        {{ form.password }}
+      </div>
+      <input type="submit" value="Login" class="btn btn-primary text-white w-100 mt-4 fw-semibold shadow-sm">
+      <input type="hidden" name="next" value="{{ next }}">
+    </form>
+
+    <p class="text-center mt-3">
+      <a href="{% url 'password_reset' %}" class="text-secondary">¿Contraseña olvidada?</a>
+    </p>
+  </div>
+</main>
+
+{% endblock %}
+
+</body>
+
+</html>

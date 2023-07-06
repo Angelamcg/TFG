@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <form action="/cancelar_devolucion" method="POST">
+        {% csrf_token %}
+        <h2>¿Desea cancelar la devolucion?</h2>
+        <a href="/realizar_devolucion/" class="btn btn-outline-secondary">Seguir con la devolución</a>
+        <button type="submit" name="cancelar_devolucion" class="btn btn-primary">Cancelar la devolución</button>
+
+    </form>
+
+</main>
+
+{% endblock %}

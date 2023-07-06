@@ -1,0 +1,230 @@
+{% extends 'index.html' %}
+
+
+{% block content %}
+
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 mb-5">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Formulario Compra</h1>
+        <h4><a href=".">Volver a Productos</a></h4>
+    </div>
+
+    <!-- Mensaje de confirmacion -->
+    {% if r %}
+    <div class="alert alert-success" role="alert">
+        <h5>{{ r }}</h5>
+    </div>
+    {% endif %}
+
+    <!-- Mensaje de error -->
+    {% if r2 %}
+    <div class="alert alert-danger" role="alert">
+        <h5>{{ r2 }}</h5>
+    </div>
+    {% endif %}
+
+    <form action="/insertar_comp_nuevo" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2>Características del Producto</h2>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="control-label">Nombre</label>
+                        <input type="text" name="txtnom" placeholder="Nombre del Producto" required
+                            class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Referencia</label>
+                        <input type="text" name="txtref" placeholder="Referencia del Producto" required
+                            class="form-control form-control-lg" />
+                    </div>
+
+                    <em>Si la referencia del producto ya está registrada:  <a href="form_registrar_comp_exist">Añadir producto existente</a></em>
+
+                    <br><br>
+
+                    <div class="form-group">
+                        <label class="control-label">Tipo de lámpara</label>
+                        <select name="tipo" class="form-select form-select-lg" required>
+                            <option value="" selected>Seleccione el tipo de lámpara</option>
+                            <option value="techo">Lámpara de techo</option>
+                            <option value="aplique">Aplique de pared</option>
+                            <option value="plafon">Plafón</option>
+                            <option value="flexos">Flexo</option>
+                            <option value="pie">Lámpara pie de salón</option>
+                            <option value="infantil">Lámpara infantil</option>
+                            <option value="exterior">Iluminación exterior</option>
+                            <option value="ventiladores">Ventilador</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Descripción</label>
+                        <textarea id="descripcion" class="form-control" name="descripcion" placeholder="Descripción"
+                            style="height: 100px" required></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Precio venta para mayoristas</label>
+                                <input type="number" class="form-control" name="precio_may"
+                                    placeholder="Precio para mayorista" min="0" step="0.01" pattern="\d+(\.\d{2})?" required>
+                            </div>
+                        </div>
+            
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Precio venta para minoristas</label>
+                                <input type="number" class="form-control" name="precio_min"
+                                    placeholder="Precio para minoristas" min="0" step="0.01" pattern="\d+(\.\d{2})?" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Adjuntar imagen</label>
+                        <input type="file" id="fotografia" name="fotografia" accept="image/*" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2>Datos de la compra</h2>
+                </div>
+
+                <div class="card-body">                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Cantidad</label>
+                                <input type="number" name="txtcant" placeholder="Cantidad" min="1" required class="form-control form-control-lg"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Precio de compra</label>
+                                <input type="number" class="form-control" name="precio_comp" placeholder="Precio de compra" min="0" step="0.01" pattern="\d+(\.\d{2})?" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-top">
+                        <label class="control-label">Coste total:</label>
+                        <h2 id="costo_total"></h2>
+                    </div>
+                    
+                    <script>
+                        function calcularCosto() {
+                            var precio_comp = parseFloat(document.getElementsByName('precio_comp')[0].value);
+                            var cantidad = parseInt(document.getElementsByName('txtcant')[0].value);
+                    
+                            var costo_total = precio_comp * cantidad;
+                    
+                            if (!isNaN(costo_total)) {
+                                document.getElementById('costo_total').textContent = costo_total.toFixed(2) + " €";
+                            }
+                        }
+                    
+                        document.getElementsByName('precio_comp')[0].addEventListener('input', calcularCosto);
+                        document.getElementsByName('txtcant')[0].addEventListener('input', calcularCosto);
+                    </script>
+                </div>
+            </div>
+        </div>
+
+
+        <br />
+
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2>Datos del proveedor</h2>
+                </div>
+
+                <div class="card-body">
+                    <label class="control-label">Proveedor</label>
+                    <select id="proveedor" name="proveedor" class="form-select form-select-lg" required>
+                        <option value="" selected>Seleccione el proveedor</option>
+                        {% for proveedor in proveedores %}
+                        <option value="{{ proveedor.id }}">{{ proveedor.nombre_empresa }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <br>
+                    <em>Si el proveedor es nuevo:  <a href="form_registrar_prov">Añadir nuevo proveedor</a></em>
+                </div>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2>Ubicación en almacén</h2>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="control-label">Pasillo</label>
+                            <select name="pasillo" class="form-select form-select-lg">
+                                <option value="" selected>Pasillo</option>
+                                {% for pasillo in pasillos_list %}
+                                <option value="{{ pasillo }}">Pasillo {{ pasillo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="control-label">Sección</label>
+                            <select name="seccion" class="form-select form-select-lg">
+                                <option value="" selected>Sección</option>
+                                {% for seccion in secciones_list %}
+                                <option value="{{ seccion }}">Sección {{ seccion }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="control-label">Altura</label>
+                            <select name="altura" class="form-select form-select-lg">
+                                <option value="" selected>Altura</option>
+                                {% for altura in alturas_list %}
+                                <option value="{{ altura }}">Altura {{ altura }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+
+        <br />
+
+        <input type="submit" value="Comprar" class="btn btn-primary btn-lg" style="width:100%" />
+
+    </form>
+
+    </div>
+    {% endblock %}
+
+
+
+    </html>

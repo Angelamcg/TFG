@@ -1,0 +1,189 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Realizar Devolución</h1>
+        <h4><a href="/">Volver a Productos</a></h4>
+    </div>
+
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-warning">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+    <div class="accordion " id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h4 class="card-title text-center">DATOS DE FACTURACIÓN</h4>
+                <br>
+                <div class="row">
+                    <div class="col-6 col-md-6">
+                        {% if venta.id_cliente %}
+                        <div>
+                            <strong>{{ venta.id_cliente.nombre_empresa }}</strong>
+                        </div>
+                        <div>CIF: {{ venta.id_cliente.cif }}</div>
+                        <div>Email: {{ venta.id_cliente.email }}</div>
+                        <div>Web: {{ venta.id_cliente.web }}</div>
+                        <div>Teléfono: {{ venta.id_cliente.telefono }}</div>
+                        {% else %}
+                        <div>
+                            <strong>VENTA AL POR MENOR</strong>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                    <div class="col-4 col-md-4">
+                        <div class="text-md-right">
+                            Fecha: <strong>{{ venta.fecha }}</strong>
+                            <br>
+                            Código: <strong>{{ venta.id }}</strong>
+                            <br>
+                            Empleado: <strong>{{ venta.id_usuario }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive-sm ">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col" width="50%">Producto</th>
+                                <th scope="col" width="8%" class="text-right">Precio Total</th>
+                                <th scope="col" width="10%" class="text-right">Cantidad Comprada</th>
+                                <th scope="col" width="8%" class="text-right">IVA</th>
+                                <th scope="col" width="8%" class="text-right">Precio Unidad</th>
+                                <th scope="col" width="10%" class="text-right">Cantidad a Devolver</th>
+                                <th scope="col" width="5%" class="text-right"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fila_venta in filas_venta %}
+                            <tr>
+                                <td class="item_name">{{ fila_venta.producto.nombre }}</td>
+                                <td class="text-right">{{ fila_venta.precio_total }}€</td>
+                                <td class="text-right">{{ fila_venta.cantidad_venta }}</td>
+
+                                <td class="text-right">21%</td>
+                                <td class="text-right">{{ fila_venta.precio_venta }}€</td>
+
+
+                                <td class="text-right">
+                                    <form action="/devolver_producto/{{ venta.id }}/{{ fila_venta.producto.id }}"
+                                        method="POST">
+                                        {% csrf_token %}
+                                        <input class="form-control" type="number" name="cant_devolver" min="0"
+                                            max="{{ fila_venta.cantidad_venta }}" />
+                                        <input type="hidden" name="producto_id" value="{{ fila_venta.producto.id }}">
+                                        <input type="hidden" name="producto_precio"
+                                            value="{{ fila_venta.precio_venta }}">
+                                </td>
+                                <td class="text-right">
+                                    <button type="submit" class="btn btn-outline-primary">Devolver</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            {% if productos_devueltos %}
+                            {% for producto_devuelto in productos_devueltos %}
+                            <tr class="devolucion-row">
+                                <td class="item_name" style="color: red;">{{ producto_devuelto.nombre }}</td>
+                                <td class="text-right" style="color: red;">-{{ producto_devuelto.precio_total }}€</td>
+                                <td></td>
+                                <td class="text-right" style="color: red;">21%</td>
+                                <td class="text-right" style="color: red;">-{{ producto_devuelto.precio }}€</td>
+                                <td class="text-right" style="color: red;">-{{ producto_devuelto.cantidad }}</td>
+
+
+                                <td>
+                                    <a href="/eliminar_devuelto/{{ producto_devuelto.id }}/{{ venta.id }}" class="btn">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                    <br>
+
+
+                    <div class="form-group">
+                        <h4 class="control-label">Especifique el motivo de su devolución:</h4>
+                        <form action="/confirmar_devolucion/{{ venta.id }}" method="post">
+                            {% csrf_token %}
+                            <label>
+                                <input type="radio" name="motivo" value="Producto defectuoso" required>
+                                Producto defectuoso
+                            </label>
+                            <br>
+                            <label>
+                                <input type="radio" name="motivo" value="Producto incorrecto" required>
+                                Producto incorrecto
+                            </label>
+                            <br>
+                            <label>
+                                <input type="radio" name="motivo" value="Descripción inexacta" required>
+                                Descripción inexacta
+                            </label>
+                            <br>
+                            <label>
+                                <input type="radio" name="motivo" value="Insatisfacción con el producto" required>
+                                Insatisfacción con el producto
+                            </label>
+                            <br>
+                            <label>
+                                <input type="radio" name="motivo" value="otro" required>
+                                Otro motivo:
+                            </label>
+                            <br>
+
+                            <textarea id="motivoOtro" class="form-control" name="motivoOtro"
+                                placeholder="Ingrese su motivo de devolución..." style="height: 100px"></textarea>
+                            <br>
+                            <button type="submit" name="confirmar_devolucion" class="btn btn-outline-primary btn-lg"
+                                style="width:100%">Confirmar Devolucion</button>
+                        </form>
+
+                        <form action="/cancelar_devolucion/{{ venta.id }}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" name="confirmar_devolucion" class="btn btn-outline-secondary btn-lg"
+                                style="width:100%">Cancelar Devolucion</button>
+                        </form>
+
+
+                        <script>
+                            const radioOtro = document.querySelector('input[value="otro"]');
+                            const motivoOtroTextarea = document.getElementById('motivoOtro');
+
+                            motivoOtroTextarea.addEventListener('input', function () {
+                                if (motivoOtroTextarea.value.trim() !== '') {
+                                    radioOtro.checked = true;
+                                } else {
+                                    radioOtro.checked = false;
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+
+                <br>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+    </div>
+</main>
+
+{% endblock %}

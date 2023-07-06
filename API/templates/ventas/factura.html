@@ -1,0 +1,209 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<style>
+    .custom-container {
+        width: 21cm;
+        min-height: 29.7cm;
+        border: 1px solid #747474;
+        padding: 1cm;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    @media screen {
+        .print-hidden {
+            display: none;
+        }
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        .custom-container,
+        .custom-container * {
+            visibility: visible;
+        }
+
+        .custom-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .print-visible {
+            display: none;
+        }
+
+        .custom-container {
+            border: none;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        @page {
+            size: A4 portrait;
+            margin: auto;
+        }
+    }
+</style>
+
+<div class="main">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Factura venta {{ venta.id }}</h1>
+
+        <button class="btn btn-primary" onclick="window.print()">Imprimir</button>
+        <a href="/realizar_devolucion/{{venta.id}}"class="btn btn-secondary">Realizar una Devolución</a>
+
+        <h4><a href="/listado_venta">Volver a Listado de Ventas</a></h4>
+    </div>
+
+    <div class="custom-container">
+        <div class="card-body border-bottom mb-0 d-flex justify-content-between">
+            <div class="col-4 col-md-4">
+                <img src="/static/images/circular.bmp" alt="Logo Lámparas Ángel" style="max-height: 3.5cm; max-width: 3.5cm;">
+            </div>
+            <div class="col-4 col-md-6" style="margin-bottom: 2cm;">
+                <br>
+                <div><strong>Lámparas Ángel</strong></div>
+                <div>CIF: 123456789B</div>
+                <div>Email: <a href="mailto:lamparasangel@hotmail.com" class="print-visible">lamparasangel@hotmail.com</a><span class="print-hidden">lamparasangel@hotmail.com</span></div>
+                <div>Web: <a href="http://www.lamparasangel.com" target="_blank" class="print-visible">http://www.lamparasangel.com</a><span class="print-hidden">http://www.lamparasangel.com</span></div>
+                <div>Teléfono: <a href="tel:958439637" class="print-visible">958439637</a><span class="print-hidden">958439637</span></div>
+            </div>
+        </div>
+
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h4 class="card-title text-center">DATOS DE FACTURACIÓN</h4>
+                    <br>
+                    <div class="row">
+                        <div class="col-6 col-md-6">
+                            {% if venta.id_cliente %}
+                            <div>
+                                <strong>{{ venta.id_cliente.nombre_empresa }}</strong>
+                            </div>
+                            <div>CIF: {{ venta.id_cliente.cif }}</div>
+                            <div>Email: <a href="mailto:{{ venta.id_cliente.email }}" class="print-visible">{{ venta.id_cliente.email }}</a><span class="print-hidden">{{ venta.id_cliente.email }}</span></div>
+                            <div>Web: <a href="{{ venta.id_cliente.web }}" target="_blank" class="print-visible">{{ venta.id_cliente.web }}</a><span class="print-hidden">{{ venta.id_cliente.web }}</span></div>
+                            <div>Teléfono: <a href="tel:{{ venta.id_cliente.telefono }}" class="print-visible">{{ venta.id_cliente.telefono }}</a><span class="print-hidden">{{ venta.id_cliente.telefono }}</span></div>
+                            {% else %}
+                            <div>
+                                <strong>VENTA AL POR MENOR</strong>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-4 col-md-4">
+                            <div class="text-md-right">
+                                Fecha: <strong>{{ venta.fecha }}</strong>
+                                <br>
+                                Código: <strong>{{ venta.id }}</strong>
+                                <br>
+                                Empleado: <strong>{{ venta.id_usuario }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body" style="margin-top: 2cm;">
+                    <div class="table-responsive-sm ">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col" width="20%">Producto</th>
+                                    <th scope="col" width="10%" class="text-right">Cantidad</th>
+                                    <th scope="col" width="8%" class="text-right">IVA</th>
+                                    <th scope="col" width="8%" class="text-right">P. Unidad</th>
+                                    <th scope="col" width="8%" class="text-right">Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fila_venta in filas_venta %}
+                                <tr>
+                                    <td class="item_name {% if fila_venta.devolucion %}text-danger{% endif %}">{{ fila_venta.producto.nombre }}</td>
+                                    <td class="text-right {% if fila_venta.devolucion %}text-danger{% endif %}">{{ fila_venta.cantidad_venta }}</td>
+                                    <td class="text-right {% if fila_venta.devolucion %}text-danger{% endif %}">21%</td>
+                                    <td class="text-right {% if fila_venta.devolucion %}text-danger{% endif %}">{{ fila_venta.precio_venta }}€</td>
+                                    <td class="text-right {% if fila_venta.devolucion %}text-danger{% endif %}">{{ fila_venta.precio_total }}€</td>
+                                </tr>
+                                {% if fila_venta.devolucion %}
+                                <tr class="text-danger">
+                                    <td colspan="5">
+                                        <div class="row">
+                                            <div class="col-md-6"></div>
+                                            <div class="col-md-3 text-md-right">
+                                                <span class="text-danger">Fecha: {{ fila_venta.fecha_devolucion }}</span>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <span class="text-danger">Razón: {{ fila_venta.razon_devolucion }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                
+                                
+                                {% endfor %}
+                            </tbody>
+                            
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-5"></div>
+                        <div class="col-lg-4 col-sm-5 ml-auto">
+                            <table class="table table-sm table-clear">
+                                <tbody>
+                                    <tr>
+                                        <td class="left">
+                                            <strong>Subtotal</strong>
+                                        </td>
+                                        <td class="text-right bg-light">{{ subtotal }}€</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="left">
+                                            <strong>Total IVA (21%)</strong>
+                                        </td>
+                                        <td class="text-right bg-light">{{ iva }}€</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="left">
+                                            <strong>Venta Total</strong>
+                                        </td>
+                                        <td class="text-right bg-light">
+                                            <strong>{{ total_venta }}€</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="left">
+                                            <strong>Devoluciones</strong>
+                                        </td>
+                                        <td class="text-right bg-light">{{ total_dev }}€</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="left">
+                                            <strong>Total</strong>
+                                        </td>
+                                        <td class="text-right bg-light">
+                                            <strong>{{ total }}€</strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-justify mt-4" style="font-size: x-small; bottom: 0;">En vista del cumplimiento de la normativa europea 2016/679 sobre Protección de datos (RGPD) le informamos que el tratamiento de los datos proporcionados por Ud. será responsabilidad de (Nombre de responsables, representantes o delegados de tratamiento) con el objetivo de (Finalidad del Tratamiento), y que además se compromete a no ceder o comunicar la información a terceros. Puede ejercer sus derechos de acceso, rectificación, cancelación o supresión del tratamiento a través de (correo electrónico, dirección física).</p>
+        </div>
+    </div>
+</div>
+<br>
+
+{% endblock %}

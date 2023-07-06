@@ -1,0 +1,155 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<style>
+    @media screen {
+        .print-hidden {
+            display: none;
+        }
+    }
+
+    @media print {
+        .print-visible {
+            display: none;
+        }
+
+        @page {
+            size: A4 portrait;
+            margin: 0.5cm;
+        }
+    }
+</style>
+
+<div class="print-visible">
+    <div class="border-bottom pb-2 mb-3">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <h1 class="h2">Listado de precios - Mayoristas</h1>
+            <button class="btn btn-primary" onclick="window.print()">Imprimir</button>
+
+            <div class="d-flex">
+                <form method="GET">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="tipoDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Seleccione el tipo de lámpara
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="tipoDropdown">
+                            <li><a class="dropdown-item" href="?tipo=techo">Lámpara de techo</a></li>
+                            <li><a class="dropdown-item" href="?tipo=aplique">Aplique de pared</a></li>
+                            <li><a class="dropdown-item" href="?tipo=plafon">Plafón</a></li>
+                            <li><a class="dropdown-item" href="?tipo=flexos">Flexo</a></li>
+                            <li><a class="dropdown-item" href="?tipo=pie">Lámpara pie de salón</a></li>
+                            <li><a class="dropdown-item" href="?tipo=infantil">Lámpara infantil</a></li>
+                            <li><a class="dropdown-item" href="?tipo=exterior">Iluminación exterior</a></li>
+                            <li><a class="dropdown-item" href="?tipo=ventiladores">Ventilador</a></li>
+                            <li><a class="dropdown-item" href="/">Todos los tipos</a></li>
+                        </ul>
+                    </div>
+                </form>
+
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="ordenarDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Ordenar
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="ordenarDropdown">
+                        <li><a class="dropdown-item" href="?order_by=nombre_asc">Nombre Ascendente</a></li>
+                        <li><a class="dropdown-item" href="?order_by=nombre_desc">Nombre Descendente</a></li>
+                        <li><a class="dropdown-item" href="?order_by=precio_mayorista_asc">Precio Ascendente</a></li>
+                        <li><a class="dropdown-item" href="?order_by=precio_mayorista_desc">Precio Descendente</a></li>
+                        <li><a class="dropdown-item" href="?order_by=referencia_asc">Referencia Ascendente</a></li>
+                        <li><a class="dropdown-item" href="?order_by=referencia_desc">Referencia Descendente</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <form method="get">
+                    <div class="d-flex col-md-12" role="search" id="prod-search">
+                        <input type="search" class="form-control rounded" placeholder="Buscar productos..." name="buscar">
+                        <button type="submit" class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-search" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if r %}
+<div class="alert alert-success" role="alert">
+    <h5>{{ r }}</h5>
+</div>
+{% endif %}
+
+{% if r2 %}
+<div class="alert alert-danger" role="alert">
+    <h5>{{ r2 }}</h5>
+</div>
+{% endif %}
+
+{% if messages %}
+<ul class="messages alert alert-success" role="alert">
+    {% for message in messages %}
+    <h5>{% if message.tags %}{% endif %}{{ message }}</h5>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if prod %}
+<div class="print-hidden">
+    <div class="d-flex align-items-center">
+        <img src="/static/images/circular.bmp" alt="Logo Lámparas Ángel"
+            style="max-height: 2cm; max-width: 2cm; margin: 1cm; margin-left: 0cm;">
+        <h2>Listado de precios - Mayoristas</h2>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th></th>
+                <th>NOMBRE</th>
+                <th>REFERENCIA</th>
+                <th>PRECIO</th>
+                <th>UBICACIÓN</th>
+                <th>DESCRIPCIÓN</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for x in prod %}
+            <tr class="align-middle">
+                <td><img src="/media/{{ x.fotografia }}" alt="Imagen de {{ x.nombre }}"
+                        style="max-height: 2cm; max-width: 2cm;"></td>
+                <td>{{ x.nombre }}</td>
+                <td>{{ x.referencia }}</td>
+                <td>{{ x.precio_mayorista }}€</td>
+                <td>
+                    Pasillo: {{ x.id_ubicacion.pasillo }}<br>
+                    Sección: {{ x.id_ubicacion.seccion }}<br>
+                    Altura: {{ x.id_ubicacion.altura }}
+                </td>
+                <td>{{ x.descripcion }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+
+<div class="alert alert-danger" role="alert">
+    <h5>No se ha encontrado ningún producto.</h5>
+</div>
+
+{% endif %}
+
+{% endblock %}

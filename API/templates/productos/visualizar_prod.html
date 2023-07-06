@@ -1,0 +1,200 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-end pb-2 mb-3 border-bottom mr-3 pr-3">
+    <h4><a href="/" class="text-right">Volver a Productos</a></h4>
+</div>
+
+
+
+
+<div class="accordion" id="accordionExample">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h2>Características - <strong>{{ prod.nombre}}</strong></h2>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9 float-left">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Nombre:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.nombre }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Referencia:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.referencia }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Cantidad:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.cantidad }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Tipo:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.tipo }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Precio para mayoristas:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.precio_mayorista }}€
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Precio para minoristas:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.precio_minorista }}€
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Descripción:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.descripcion }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 float-right">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <img src="/media/{{ prod.fotografia }}" alt="Imagen de {{ prod.nombre }}"
+                                    class="img-fluid" style="max-height: 5cm;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="accordion" id="accordionExample">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h2>Ubicación en almacén </strong></h2>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9 float-left">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Pasillo:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.id_ubicacion.pasillo }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Sección:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.id_ubicacion.seccion }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Altura:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.id_ubicacion.altura }}
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-9">
+                                <a href="../almacen">Mostrar plano del almacén</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div class="accordion" id="accordionExample">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h2>Datos del proveedor</h2>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9 float-left">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Nombre:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.id_proveedor.nombre_empresa }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>CIF:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                {{ prod.id_proveedor.cif }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Email:</strong>
+                            </div>
+                            <div class="col-md-9"> <a href="mailto:{{ prod.id_proveedor.email }}">{{ prod.id_proveedor.email }}</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Web:</strong>
+                            </div>
+                            <div class="col-md-9"><a href="{{ prod.id_proveedor.web }}">{{ prod.id_proveedor.web }}</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Teléfono:</strong>
+                            </div>
+                            <div class="col-md-9"><a href="tel:{{ prod.id_proveedor.telefono }}">{{ prod.id_proveedor.telefono }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</main>
+{% endblock %}

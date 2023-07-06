@@ -1,0 +1,248 @@
+{% extends 'index.html' %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+</head>
+
+<body>
+
+    {% block content %}
+    <form action="/actualizar_prod/{{ prod.id }}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2>Datos del nuevo producto</h2>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="control-label">Nombre</label>
+                        <input type="text" name="txtnom" value="{{ prod.nombre }}" placeholder="Nombre del Producto"
+                            required class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Referencia</label>
+                        <input type="text" name="txtref" value="{{ prod.referencia }}"
+                            placeholder="Referencia del Producto" required class="form-control form-control-lg" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Cantidad</label>
+                        <input type="number" name="txtcant" value="{{ prod.cantidad }}" placeholder="Cantidad" min="1"
+                            required class="form-control form-control-lg" />
+                    </div>
+
+                    <script>
+                        var tipoProd = "{{ prod.tipo }}";
+                    </script>
+
+
+                    <div class="form-group">
+                        <label class="control-label">Tipo de lámpara</label>
+                        <select name="tipo" class="form-select form-select-lg" id="tipoSelect" required>
+                            <option value="">Seleccione el tipo de lámpara</option>
+                            <option value="techo">Lámpara de techo</option>
+                            <option value="aplique">Aplique de pared</option>
+                            <option value="plafon">Plafón</option>
+                            <option value="flexos">Flexo</option>
+                            <option value="pie">Lámpara pie de salón</option>
+                            <option value="infantil">Lámpara infantil</option>
+                            <option value="exterior">Iluminación exterior</option>
+                            <option value="ventiladores">Ventilador</option>
+                        </select>
+                    </div>
+
+                    <script>
+                        var tipoProducto = "{{ prod.tipo }}";
+                        var tipoSelect = document.getElementById("tipoSelect");
+                        tipoSelect.value = tipoProducto;
+                    </script>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Precio para mayoristas</label>
+                                <input type="number" class="form-control" name="precio_may"
+                                    value="{{ prod.precio_mayorista }}" placeholder="Precio para mayorista" step="0.01" min="0"
+                                    pattern="\d+(\.\d{2})?" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Precio para minoristas</label>
+                                <input type="number" class="form-control" name="precio_min"
+                                    value="{{ prod.precio_minorista }}" placeholder="Precio para minoristas" step="0.01" min="0"
+                                    pattern="\d+(\.\d{2})?" required>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Descripción</label>
+                        <textarea id="descripcion" class="form-control" name="descripcion" placeholder="Descripción"
+                            style="height: 100px" required>{{ prod.descripcion }}</textarea>
+                    </div>
+
+
+                    <!-- <div class="form-group">
+                        <label class="control-label">Adjuntar imagen</label>
+                        <input type="file" id="fotografiaInput" name="fotografia" accept="image/*">
+                        {% if prod.fotografia %}
+                        <p><strong>URL de la imagen ya adjuntada:</strong> media/{{ prod.fotografia }}</p>
+                        <input type="hidden" id="imagenActualInput" name="imagen_actual" value="/media/{{ prod.fotografia }}">
+                        {% endif %}
+                    </div> -->
+                    <div class="form-group">
+                        <label class="control-label">Adjuntar imagen</label>
+                        {% if not prod.fotografia %}
+                        <input type="file" id="fotografiaInput" name="fotografia" accept="image/*">
+                        {% endif %}
+                        {% if prod.fotografia %}
+                        <p><strong>URL de la imagen ya adjuntada:</strong> media/{{ prod.fotografia }}</p>
+                        <input type="hidden" id="imagenActualInput" name="imagen_actual" value="{{ prod.fotografia }}">
+                        <input type="file" id="fotografiaInput" name="fotografia" accept="image/*">
+                        {% endif %}
+                    </div>
+                    
+                    
+                    <script>
+                        // Obtener los elementos relevantes
+                        var fotografiaInput = document.getElementById('fotografiaInput');
+                        var imagenActualInput = document.getElementById('imagenActualInput');
+                    
+                        // Agregar un event listener al cambio de selección
+                        fotografiaInput.addEventListener('change', function() {
+                            var selectedFile = fotografiaInput.files[0];
+                            if (selectedFile) {
+                                // Se ha seleccionado un archivo nuevo, limpiar el campo de imagen actual
+                                imagenActualInput.value = '';
+                            }
+                        });
+                    </script>
+                    
+
+
+
+                </div>
+            </div>
+
+            <br />
+
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h2>Datos del proveedor</h2>
+                    </div>
+
+                    <div class="card-body">
+
+                        <label class="control-label">Proveedor</label>
+                        <select id="provSelect" name="proveedor" class="form-select form-select-lg" required>
+                            <option value="" selected>Seleccione el proveedor</option>
+
+                            {% for proveedor in proveedores %}
+                            <option value="{{ proveedor.id }}">{{ proveedor.nombre_empresa }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <script>
+                        var provProd = "{{ prod.id_proveedor.id }}";
+                        var provSelect = document.getElementById("provSelect");
+                        provSelect.value = provProd;
+                    </script>
+
+
+                </div>
+            </div>
+
+            <br />
+
+            <div class="accordion" id="accordionExample">
+                <div class="card" id="ubicacion">
+                    <div class="card-header" id="headingOne">
+                        <h2>Ubicación en almacén</h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">Pasillo</label>
+                                <select id="pasilloSelect" name="pasillo" class="form-select form-select-lg">
+                                    <option value="" selected>Pasillo</option>
+                                    {% for pasillo in pasillos_list %}
+                                    <option value="{{ pasillo }}">Pasillo {{ pasillo }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <script>
+                                var pasilloProducto = "{{ prod.id_ubicacion.pasillo }}";
+                                var pasilloSelect = document.getElementById("pasilloSelect");
+                                pasilloSelect.value = pasilloProducto;
+                            </script>
+
+                            <div class="col-md-4">
+                                <label class="control-label">Sección</label>
+                                <select id="seccionSelect" name="seccion" class="form-select form-select-lg">
+                                    <option value="" selected>Sección</option>
+                                    {% for seccion in secciones_list %}
+                                    <option value="{{ seccion }}">Sección {{ seccion }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <script>
+                                var seccionProducto = "{{ prod.id_ubicacion.seccion }}";
+                                var seccionSelect = document.getElementById("seccionSelect");
+                                seccionSelect.value = seccionProducto;
+                            </script>
+
+                            <div class="col-md-4">
+                                <label class="control-label">Altura</label>
+                                <select id="alturaSelect" name="altura" class="form-select form-select-lg">
+                                    <option value="" selected>Altura</option>
+                                    {% for altura in alturas_list %}
+                                    <option value="{{ altura }}">Altura {{ altura }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <script>
+                                var alturaProducto = "{{ prod.id_ubicacion.altura }}";
+                                var alturaSelect = document.getElementById("alturaSelect");
+                                alturaSelect.value = alturaProducto;
+                            </script>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+            <br />
+
+            <input type="submit" value="Guardar Datos" class="btn btn-primary btn-lg" style="width:100%" />
+
+    </form>
+    </div>
+
+    </main>
+    {% endblock %}
+
+
+</body>
+
+</html>

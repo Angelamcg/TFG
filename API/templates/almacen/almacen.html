@@ -1,0 +1,118 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<main role="main">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center border-bottom">
+        <h1 class="h2">Almacén</h1>
+        <a href="/" class="btn btn-outline-secondary">Volver al Inicio</a>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <img src="/media/{{ plano.imagen }}" alt="Plano del almacen" class="img-responsive"
+                style="height: 15cm; width: 15cm; margin: 1cm">
+        </div>
+
+        <div class="col-md-6">
+            <form method="GET" action="/almacen">
+                <div class="d-flex">
+                    <select name="pasillo" class="form-select form-select-lg mb-3 me-3">
+                        <option value="" selected>Pasillo</option>
+
+                        {% for pasillo in pasillos_list %}
+                        <option value="{{ pasillo }}">Pasillo {{ pasillo }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="seccion" class="form-select form-select-lg mb-3 me-3">
+                        <option value="" selected>Sección</option>
+                        {% for seccion in secciones_list %}
+                        <option value="{{ seccion }}">Sección {{ seccion }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="altura" class="form-select form-select-lg mb-3 me-3">
+                        <option value="" selected>Altura</option>
+                        {% for altura in alturas_list %}
+                        <option value="{{ altura }}">Altura {{ altura }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <input type="submit" name="submit" value="Buscar productos" class="btn btn-primary mb-3" />
+                </div>
+            </form>
+
+
+            {% if productos %}
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>FOTOGRAFIA</th>
+                            <th>NOMBRE</th>
+                            <th>REFERENCIA</th>
+                            <th>CANTIDAD</th>
+                            <th>UBICACION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in productos %}
+                        <tr>
+                            <td><img src="/media/{{ x.fotografia }}" alt="Imagen de {{ x.nombre }}"
+                                    style="max-height: 3cm;"></td>
+                            <td>{{ x.nombre }}</td>
+                            <td>{{ x.referencia }}</td>
+                            <td>{{ x.cantidad }}</td>
+                            <td>
+                                Pasillo: {{ x.id_ubicacion.pasillo }}<br>
+                                Sección: {{ x.id_ubicacion.seccion }}<br>
+                                Altura: {{ x.id_ubicacion.altura }}
+                            </td>
+                            <td>
+                                <a href="/visualizar_prod/{{ x.id }}"><i class="bi bi-eye-fill"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <!-- Paginación -->
+                <div class="d-flex justify-content-center">
+                    <ul class="pagination">
+                        {% if productos.has_previous %}
+                        <li class="page-item">
+                            <a
+                                href="?pasillo={{ request.GET.pasillo }}&seccion={{ request.GET.seccion }}&altura={{ request.GET.altura }}&page={{ productos.previous_page_number }}">Anterior</a>
+                        </li>
+                        {% endif %}
+
+                        <li class="page-item"><span class="current-page">{{ productos.number }}</span></li>
+
+                        {% if productos.has_next %}
+                        <li class="page-item">
+                            <a
+                                href="?pasillo={{ request.GET.pasillo }}&seccion={{ request.GET.seccion }}&altura={{ request.GET.altura }}&page={{ productos.next_page_number }}">Siguiente</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        {% else %}
+        {% if request.GET.pasillo or request.GET.seccion or request.GET.altura %}
+        <div class="alert alert-danger" role="alert">
+            <p>No se encontraron productos.</p>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    {% if user.is_staff %}
+    <div class="border-top mt-10 pt-4">
+        <a href="/modificar_almacen" class="btn btn-link">Modificar almacén</a>
+    </div>
+    
+    {% endif %}
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'index.html' %}
+    {% block content %}
+    <main role="main">
+        <div class="border-bottom pb-2 mb-3 ">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                <h1 class="h2">Proveedores</h1>
+
+                <div class="row">
+                    <form method="get">
+                        <div class="d-flex col-md-12" role="search" id="prov-search">
+                            <input type="search" class="form-control rounded" placeholder="Buscar proveedor..."
+                                name="buscar">
+                            <button type="submit" class="btn btn-secondary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-search" viewBox="0 0 16 16">
+                                    <path
+                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <h4><a href="/form_registrar_prov"> Añadir Nuevo Proveedor </a></h4>
+
+                <a href="/" class="btn btn-outline-secondary">Volver al Inicio</a>
+            </div>
+        </div>
+
+        {% if r %}
+        <div class="alert alert-success" role="alert">
+            <h5>{{ r }}</h5>
+        </div>
+        {% endif %}
+
+        {% if r2 %}
+        <div class="alert alert-danger" role="alert">
+            <h5>{{ r2 }}</h5>
+        </div>
+        {% endif %}
+
+        {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if prov %}
+
+        <div class="table-responsive">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <!-- <th>ID</th> -->
+                        <th>NOMBRE</th>
+                        <th>CIF</th>
+                        <th>E-MAIL</th>
+                        <th>TELÉFONO</th>
+                        <th>WEB</th>
+                        <th>EDITAR</th>
+                        <th>ELIMINAR</th>
+                    </tr>
+
+                    {% for x in prov %}
+
+                    <tr class="align-middle">
+
+                        <!-- <td>{{ x.id }}</td> -->
+                        <td>{{ x.nombre_empresa }}</td>
+                        <td>{{ x.cif }}</td>
+                        <td><a href="mailto:{{ x.email }}">{{ x.email }}</a></td>
+                        <td><a href="tel:{{ x.telefono }}">{{ x.telefono }}</a></td>
+                        <td><a href="{{ x.web }}" target="_blank">{{ x.web }}</a></td>
+
+                        <td>
+                            <a href="/form_actualizar_prov/{{ x.id }}" class="btn btn-lg">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                        </td>
+
+                        <td>
+                            <a href="/form_eliminar_prov/{{ x.id }}" class="btn btn-lg"><i
+                                    class="bi bi-trash-fill"></i></a>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </thead>
+            </table>
+
+            <!-- Paginación -->
+            <div class="d-flex justify-content-center">
+            <ul class="pagination ">
+                {% if prov.has_previous %}
+                <li class="page-item"><a href="?page={{ prov.previous_page_number }}">Anterior</a>
+                </li>
+                {% endif %}
+                <li class="page-item"><span class="current-page">{{ prov.number }}</span></li>
+                {% if prov.has_next %}
+                <li class="page-item"><a href="?page={{ prov.next_page_number }}">Siguiente</a>
+                </li>
+                {% endif %}
+            </ul>
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-danger" role="alert">
+            <h5>No se pueden cargar los proveedores.</h5>
+        </div>
+
+        {% endif %}
+
+        </div>
+    </main>
+
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

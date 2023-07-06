@@ -1,0 +1,130 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<main role="main">
+    <div class="border-bottom pb-2 mb-3 ">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <h1 class="h2">Compras</h1>
+
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="comprarDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Comprar
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="comprarDropdown">
+                    <li><a class="dropdown-item" href="/form_registrar_comp_nuevo">Comprar producto nuevo</a></li>
+                    <li><a class="dropdown-item" href="/form_registrar_comp_exist">Comprar producto existente</a></li>
+                </ul>
+            </div>
+
+            <div class="row">
+                <form method="get">
+                    <div class="d-flex col-md-12" role="search" id="comp-search">
+                        <input type="search" class="form-control rounded" placeholder="Buscar compra..." name="buscar">
+                        <button type="submit" class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-search" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="comprarDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Ordenar
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="comprarDropdown">
+                    <li><a class="dropdown-item" href="?order_by=id_asc">ID Ascendente</a></li>
+                    <li><a class="dropdown-item" href="?order_by=id_desc">ID Descendente</a></li>
+                    <li><a class="dropdown-item" href="?order_by=cantidad_asc">Cantidad Ascendente</a></li>
+                    <li><a class="dropdown-item" href="?order_by=cantidad_desc">Cantidad Descendente</a></li>
+                    <li><a class="dropdown-item" href="?order_by=precio_asc">Precio Ascendente</a></li>
+                    <li><a class="dropdown-item" href="?order_by=precio_desc">Precio Descendente</a></li>
+                    <li><a class="dropdown-item" href="?order_by=fecha_asc">Fecha Ascendente</a></li>
+                    <li><a class="dropdown-item" href="?order_by=fecha_desc">Fecha Descendente</a></li>
+                </ul>
+            </div>
+
+            <a href="/" class="btn btn-outline-secondary">Volver al Inicio</a>
+        </div>
+    </div>
+
+    {% if r %}
+    <div class="alert alert-success" role="alert">
+        <h5>{{ r }}</h5>
+    </div>
+    {% endif %}
+
+    {% if r2 %}
+    <div class="alert alert-danger" role="alert">
+        <h5>{{ r2 }}</h5>
+    </div>
+    {% endif %}
+
+    {% if comp %}
+
+
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>PRODUCTO</th>
+
+                <th>CANTIDAD</th>
+                <th>PRECIO UNITARIO</th>
+                <th>PRECIO TOTAL</th>
+                <th>FECHA</th>
+                <th>USUARIO</th>
+            </tr>
+
+        <tbody>
+            {% for x in comp %}
+            <tr class="align-middle">
+                <td>{{ x.id }}</td>
+                <td>{{ x.id_producto.nombre }}</td>
+                <td>{{ x.cantidad }}</td>
+                <td>{{ x.precio }}€</td>
+                <td>{{ x.precio_total }}€</td>
+                <td>{{ x.fecha }}</td>
+                <td>{{ x.id_usuario.get_username}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+
+        </thead>
+    </table>
+
+    <!-- Paginación -->
+    <div class="d-flex justify-content-center">
+        <ul class="pagination ">
+            {% if comp.has_previous %}
+            <li class="page-item"><a href="?page={{ comp.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+            <li class="page-item"><span class="current-page">{{ comp.number }}</span></li>
+            {% if comp.has_next %}
+            <li class="page-item"><a href="?page={{ comp.next_page_number }}">Siguiente</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+
+
+    {% else %}
+
+    <div class="alert alert-danger" role="alert">
+        <h5>No se pueden cargar las compras.</h5>
+    </div>
+
+    {% endif %}
+
+    </div>
+</main>
+
+{% endblock %}

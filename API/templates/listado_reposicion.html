@@ -1,0 +1,119 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<main role="main">
+    <div class="border-bottom pb-2 mb-3 ">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <h1 class="h2">Productos - Aviso de Reposición</h1>
+
+
+
+            <div class="row">
+                <form method="get">
+                    <div class="d-flex col-md-12" role="search" id="producto-search">
+                        <input type="search" class="form-control rounded" placeholder="Buscar producto..."
+                            name="buscar">
+                        <input type="hidden" name="cantidad_reposicion" value="{{ cantidad_reposicion }}">
+                        <button type="submit" class="btn btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-search" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="row">
+                <form method="GET">
+                    <div class="d-flex col-md-12" role="search">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="tipoDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Actualizar Cantidad de Reposición: {{ cantidad_reposicion }}
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="tipoDropdown">
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=1">1</a></li>
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=2">2</a></li>
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=3">3</a></li>
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=5">5</a></li>
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=10">10</a></li>
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=15">15</a></li>
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=20">20</a></li>
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=30">30</a></li>
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=40">40</a></li>
+                                <li><a class="dropdown-item" href="?cantidad_reposicion=50">50</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <a href="/" class="btn btn-outline-secondary">Volver al Inicio</a>
+        </div>
+    </div>
+
+    {% if productos %}
+
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>NOMBRE</th>
+                    <th>REFERENCIA</th>
+                    <th>CANTIDAD</th>
+                    <th>VISUALIZAR</th>
+                    {% if user.is_staff %}
+                    <th></th>
+                    {% endif %}
+
+                </tr>
+
+                {% for x in productos %}
+                <tr class="align-middle">
+                    <td><img src="/media/{{ x.fotografia }}" alt="Imagen de {{ x.nombre }}"
+                            style="max-height: 3cm; max-width: 3cm;"></td>
+                    <td>{{ x.nombre }}</td>
+                    <td>{{ x.referencia }}</td>
+                    <td>{{ x.cantidad }}</td>
+                    <td>
+                        <a href="/visualizar_prod/{{ x.id }}" class="btn btn-lg"><i class="bi bi-eye-fill"></i></a>
+                    </td>
+                    {% if user.is_staff %}
+                    <td>
+                        <a href="/form_registrar_comp_exist?referencia={{ x.referencia }}"
+                            class="btn btn-primary">Comprar</a>
+                    </td>
+                    {% endif %}
+
+                    {% endfor %}
+
+            </thead>
+        </table>
+
+        <!-- Paginación -->
+        <div class="d-flex justify-content-center">
+            <ul class="pagination ">
+                {% if productos.has_previous %}
+                <li class="page-item"><a href="?page={{ productos.previous_page_number }}&cantidad_reposicion={{ cantidad_reposicion }}">Anterior</a></li>
+                {% endif %}
+                <li class="page-item"><span class="current-page">{{ productos.number }}</span></li>
+                {% if productos.has_next %}
+                <li class="page-item"><a href="?page={{ productos.next_page_number }}&cantidad_reposicion={{ cantidad_reposicion }}">Siguiente</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+            <h5>No se pueden cargar los productos.</h5>
+        </div>
+        {% endif %}
+
+    </div>
+</main>
+
+{% endblock %}

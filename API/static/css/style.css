@@ -1,0 +1,10 @@
+body {
+    margin: auto;
+}
+
+/* Encabezado */
+header   {
+    background-color: darkturquoise;
+    display: flex;
+    justify-content: space-between; 
+}

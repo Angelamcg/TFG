@@ -1,0 +1,232 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Generar Venta</h1>
+        <h4><a href="/">Volver a Productos</a></h4>
+    </div>
+
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-warning">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+    <div class="accordion" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h2>Datos del cliente</h2>
+            </div>
+
+            <div class="card-body">
+
+                {% if cliente %}
+                <em>Ha seleccionado el cliente: {{ cliente.nombre_empresa }}</em>
+
+                {% else %}
+                <form action="/seleccionar_cliente" method="POST">
+                    {% csrf_token %}
+                    <label class="control-label">Cliente</label>
+                    <div class="row">
+                        <div class="d-flex col-md-12 " role="search">
+                            <select id="cliente" name="cliente" class="form-select form-select-lg"
+                                onchange="actualizarPrecio()">
+                                <option value="" selected>Seleccione el cliente</option>
+                                {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}">{{ cliente.nombre_empresa }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-secondary">Seleccionar Cliente</button>
+                        </div>
+                    </div>
+                </form>
+                <br>
+                <em>Si el cliente es nuevo: <a href="form_registrar_cl" target="_blank">Añadir nuevo cliente</a></em>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Cuadro de búsqueda de productos -->
+    <div class="accordion" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2>Búsqueda de productos</h2>
+                    </div>
+
+                    <div class="col-md-6 h2" role="search" id="prod-search">
+                        <form method="get" class="d-flex">
+                            <input type="search" class="form-control rounded" placeholder="Buscar productos..."
+                                name="buscar">
+                            <button type="submit" class="btn btn-secondary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-search" viewBox="0 0 16 16">
+                                    <path
+                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            {% if productos %}
+            <div class="table-responsive" style="max-height: 7cm; overflow-y: auto;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Referencia</th>
+                            <th>Nombre</th>
+                            <th></th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos %}
+                        <form action="/seleccionar_producto/{{ producto.id }}" method="POST">
+                            {% csrf_token %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <img src="/media/{{ producto.fotografia }}"
+                                            alt="Imagen de {{ producto.nombre }}"
+                                            style="max-height: 1cm; max-width: 1cm;">
+                                    </div>
+                                </td>
+                                <td>{{ producto.referencia }}</td>
+                                <td>{{ producto.nombre }}</td>
+                                <td><a href="/visualizar_prod/{{ producto.id }}" target="_blank">Visualizar producto</a>
+                                </td>
+                                <td><input type="number" name="cantidad" placeholder="Cantidad" min="1" required
+                                        class="form-control" /></td>
+                                {% if cliente %}
+                                <td>{{ producto.precio_mayorista }}€</td>
+                                {% else %}
+                                <td>{{ producto.precio_minorista }}€</td>
+                                {% endif %}
+                                <td>
+                                    <input type="hidden" name="id_producto" value="{{ producto.id }}">
+                                    <input type="hidden" name="referencia" value="{{ producto.referencia }}">
+                                    <input type="hidden" name="nombre" value="{{ producto.nombre }}">
+                                    <input type="hidden" name="precio"
+                                        value="{% if cliente %}{{ producto.precio_mayorista }}{% else %}{{ producto.precio_minorista }}{% endif %}">
+                                    <input type="hidden" name="fotografia" value="{{ producto.fotografia }}">
+                                    <button type="submit" class="btn btn-primary">Seleccionar</button>
+                                </td>
+                            </tr>
+                        </form>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+          {% else %}
+
+          <div class="alert alert-danger" role="alert">
+            <h5>No se ha encontrado ningún producto.</h5>
+          </div>
+
+          {% endif %}
+        </div>
+    </div>
+
+
+    <br>
+
+    {% if productos_seleccionados %}
+
+    <!-- Cuadro de productos seleccionados -->
+    <div class="accordion" id="accordionExample">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h2>Productos seleccionados</h2>
+            </div>
+            <div class="busqueda-productos">
+                <div class="table-responsive" style="max-height: 7cm; overflow-y: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Referencia</th>
+                                <th>Nombre</th>
+                                <th></th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Precio Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto_seleccionado in productos_seleccionados %}
+                            <tr>
+                                <!-- Contenido de cada fila -->
+                                <td>
+                                    <img src="/media/{{ producto_seleccionado.fotografia }}"
+                                        alt="Imagen de {{ producto_seleccionado.nombre }}"
+                                        style="max-height: 1cm; max-width: 1cm;">
+                                </td>
+                                <td>{{ producto_seleccionado.referencia }}</td>
+                                <td>{{ producto_seleccionado.nombre }}</td>
+                                <td><a href="/visualizar_prod/{{ producto_seleccionado.id }}" target="_blank">Visualizar
+                                        producto</a></td>
+                                <td>{{ producto_seleccionado.cantidad }}</td>
+
+                                <td>{{ producto_seleccionado.precio }}€</td>
+                                <td>{{ producto_seleccionado.precio_total }}€</td>
+                                <td>
+                                    <a href="/eliminar_seleccionado/{{ producto_seleccionado.id }}" class="btn">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="text-right mr-3 mt-3 mx-4">
+                <h4>Precio total: <strong>{{ total_sum }}€</strong></h4>
+            </div>
+        </div>
+    </div>
+
+
+    <br>
+    <div class="row">
+        <div class="col-md-6 ">
+            <form action="/notificar_cancelar_venta" method="post">
+                {% csrf_token %}
+                <button type="submit" name="cancelar_venta" class="btn btn-outline-secondary btn-lg" style="width:100%">Cancelar Venta</button>
+            </form>
+        </div>
+        <div class="col-md-6 ">
+            <form action="/realizar_venta" method="post">
+                {% csrf_token %}
+                <button type="submit" name="realizar_venta" class="btn btn-outline-primary btn-lg" style="width:100%">Realizar Venta</button>
+            </form>
+        </div>
+    </div>
+
+    <br>
+
+    {% endif %}
+    </div>
+</main>
+
+{% endblock %}
