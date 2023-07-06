@@ -14,12 +14,12 @@ Se espera que el resultado de esta aplicación web se vea reflejado en una autom
 
 
 ## Instalación 
-1.	Ejecutar las migraciones para crear la estructura de la base de datos:
-python3 manage.py makemigrations
-python3 manage.py migrate
+1.	Ejecutar las migraciones para crear la estructura de la base de datos:  
+python3 manage.py makemigrations  
+python3 manage.py migrate  
 
-3.	Iniciar el servidor:
-python3 manage.py runserver
+3.	Iniciar el servidor:  
+python3 manage.py runserver  
 
-5.	Abrir la aplicación en el navegador web en el link:
+5.	Abrir la aplicación en el navegador web en el link:  
 http://localhost:8000/
