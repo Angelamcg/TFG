@@ -1,7 +1,7 @@
 # Trabajo de Fin de Grado: Desarrollo de una aplicación web para gestión de inventario de una PYME
 
-## Autora:Ángela María Carrasco García 
-## Doble Grado en Ingeniería Informática y Administración de Empresas - Universidad de Granada
+### Autora: Ángela María Carrasco García 
+### Doble Grado en Ingeniería Informática y Administración de Empresas - Universidad de Granada
 
 ## Resumen 
 El proyecto que se presenta a continuación tiene como objetivo cubrir la necesidad real de una Pequeña y Mediana Empresa (PYME) con problemas de inventario. La solución se trata de una aplicación web para el control de existencias en almacén. 
